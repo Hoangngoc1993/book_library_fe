@@ -1,0 +1,40 @@
+.Menu {
+    color: white;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.menu-name {
+    color: rgb(4, 100, 45);
+    text-align: left;
+    font-size: 1.1rem;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.menu-list {
+    padding-left: 0px;
+    text-align: left;
+    color: rgb(4, 100, 45);
+}
+
+.menu-select {
+    list-style-type: none;
+    cursor: pointer;
+    text-align: left;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 6px;
+}
+
+.menu-select:hover {
+    background-color:  rgb(4, 100, 45);
+    color: white;
+}
+
+.active {
+    background-color: rgb(3, 135, 60);;
+    color: white;
+}

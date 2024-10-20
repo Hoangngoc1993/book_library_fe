@@ -1,0 +1,42 @@
+.search-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+    
+.search-table th, .search-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+    
+.search-table th {
+    background-color: #4CAF50; /* Màu nền của header */
+    color: white; /* Màu chữ của header */
+    text-align: center;
+}
+    
+.search-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+    
+.search-table tr:hover {
+    background-color: #ddd;
+}
+
+.before-search-table {
+    padding-top: 6px;
+    padding-bottom: 10px;
+}
+
+.search-table-number-rows {
+    text-align: left;
+}
+
+.search-table-pagination {
+    text-align: right;
+}
+
+.btn-search-table-pagination {
+    font-weight: bold;
+    border: 0px;
+    background-color: transparent;
+}

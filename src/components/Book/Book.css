@@ -1,0 +1,39 @@
+.book {
+    padding-right: 10px;
+}
+
+.book-item {
+    text-align: left;
+    color: white;
+    background-color: rgb(6, 159, 72);
+    margin-top: 15px;
+    margin-bottom: 6px;
+    padding-left: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.book-input {
+    align-items: start;
+}
+
+.book-search-item {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.book-search-item-name {
+    text-align: left;
+}
+
+.book-btn {
+    color: white;
+    background-color: rgb(6, 159, 72);
+    width: 100%;
+    border: 2px solid rgb(6, 159, 72);
+}
+
+.book-btn:hover {
+    background-color:rgb(3, 98, 44);
+    border: 2px solid rgb(3, 98, 44);
+}

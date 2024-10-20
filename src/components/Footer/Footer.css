@@ -1,0 +1,20 @@
+.Footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(6, 159, 72);
+    color: #fff;
+    text-align: left;
+    margin-right: 10px;
+    margin-top: 15px;
+}
+
+.footer-lib-name {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.footer-lib-info {
+    font-weight: normal;
+    font-size: 1em;
+}
+
