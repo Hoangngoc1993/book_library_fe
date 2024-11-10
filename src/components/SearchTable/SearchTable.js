@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
 import './SearchTable.css';
+import { useBookContext } from "../../context/BookContext";
 
 const SearchTable = ({ columnName, data }) => {
+
+    const { 
+        idClicked, setIdClicked
+    } = useBookContext();
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 20;
     const totalPages = Math.ceil(data.length / itemsPerPage);
-    const [minNumberPage, setMinNumberPage] = useState(1);
 
     const numberPageInPagitation = (totalPages < 5) ? totalPages : 5;
 
@@ -79,13 +83,22 @@ const SearchTable = ({ columnName, data }) => {
                 <tbody>
                     {currentData.map((row, index) => (
                         <tr key={index}>
-                            <td>{row.ma_sach}</td>
-                            <td>{row.ten_sach}</td>
-                            <td>{row.ngon_ngu}</td>
-                            <td>{row.tac_gia}</td>
-                            <td>{row.the_loai}</td>
-                            <td>{row.nam_xuat_ban}</td>
-                            <td>{row.trang_thai}</td>
+                            <td>
+                                <a
+                                    className='book-id'
+                                    onClick={(e) => {
+                                        setIdClicked(row.maSach);
+                                    }}
+                                >
+                                    {row.maSach}
+                                </a>
+                            </td>
+                            <td>{row.tenSach}</td>
+                            <td>{row.ngonNgu}</td>
+                            <td>{row.tacGia}</td>
+                            <td>{row.theLoai}</td>
+                            <td>{row.namXuatBan}</td>
+                            <td>{row.trangThai}</td>
                         </tr>
                     ))}
                 </tbody>

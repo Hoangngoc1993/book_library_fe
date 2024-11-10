@@ -6,13 +6,6 @@ const InputSelectComponent = ({ inputValue, setInputValue, listOption }) => {
         setInputValue(e.target.value);
     };
 
-    const list = [
-        { id: 1, name: 'Viet' },
-        { id: 2, name: 'Anh' },
-        { id: 3, name: 'Phap' },
-        { id: 4, name: 'Duc' }
-    ];
-
     return (
         <div>
             <select 
