@@ -40,3 +40,8 @@
     border: 0px;
     background-color: transparent;
 }
+
+.book-id {
+    color: rgb(4, 61, 19);
+    cursor: pointer;
+}
