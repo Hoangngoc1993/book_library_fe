@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 // Create context
 const BookContext = createContext();
@@ -7,40 +8,51 @@ const BookContext = createContext();
 export const BookProvider = ({ children }) => {
 
     const [listBooks, setListBooks] = useState([]);
+    const [listLanguages, setListLanguages] = useState([]);
+    const [listCategories, setListCategories] = useState([]);
+    const [listStatus, setListStatus] = useState([]);
 
     const columnName = [
         'Mã sách', 'Tên sách', 'Ngôn ngữ', 'Tác giả', 'Thể loại', 'Năm xuất bản', 'Trạng thái'
     ];
 
-    const listNgonNgu  = [
-        { id: 1, name: 'Việt' },
-        { id: 2, name: 'Anh' },
-        { id: 3, name: 'Pháp' },
-        { id: 4, name: 'Đức' }
-    ];
+    //listNgonNgu is loaded
+    useEffect(() => {
+        axios.get('http://localhost:8080/languages')
+            .then(response => {
+                setListLanguages(response.data);
+            })
+            .catch(error => {
+                console.log("Error when loading all languages");
+            });
+    }, []);
 
-    const listTheLoai = [
-        { id: 1, name: 'Sách giáo khoa' },
-        { id: 2, name: 'Thiếu nhi' },
-        { id: 3, name: 'Văn học' },
-        { id: 4, name: 'Lịch sử' },
-        { id: 5, name: 'Khoa học' },
-        { id: 6, name: 'Tôn giáo' },
-        { id: 7, name: 'Nghệ thuật' },
-        { id: 8, name: 'Sách tham khảo' }
-    ]
+    useEffect(() => {
+        axios.get('http://localhost:8080/categories')
+        .then(response => {
+            setListCategories(response.data);
+        })
+        .catch(error => {
+            console.log('Error when loading all categories!')
+        })
+    }, []);
 
-    const listTrangThai = [
-        { id: 0, name: 'Không thể mượn' },
-        { id: 1, name: 'Có thể mượn' }
-    ]
+    useEffect(() => {
+        axios.get('http://localhost:8080/status')
+        .then(response => {
+            setListStatus(response.data);
+        })
+        .catch(error => {
+            console.log('Error when loading all status!')
+        })
+    }, []);
 
     const [idClicked, setIdClicked] = useState(0);
 
     return (
         <BookContext.Provider 
             value={{ 
-                columnName, listNgonNgu, listTheLoai, listTrangThai, 
+                columnName, listLanguages, listCategories, listStatus, 
                 listBooks, setListBooks,
                 idClicked, setIdClicked
             }}
