@@ -87,18 +87,18 @@ const SearchTable = ({ columnName, data }) => {
                                 <a
                                     className='book-id'
                                     onClick={(e) => {
-                                        setIdClicked(row.maSach);
+                                        setIdClicked(row.book_id);
                                     }}
                                 >
-                                    {row.maSach}
+                                    {row.book_id}
                                 </a>
                             </td>
-                            <td>{row.tenSach}</td>
-                            <td>{row.ngonNgu}</td>
-                            <td>{row.tacGia}</td>
-                            <td>{row.theLoai}</td>
-                            <td>{row.namXuatBan}</td>
-                            <td>{row.trangThai}</td>
+                            <td>{row.book_name}</td>
+                            <td>{row.language}</td>
+                            <td>{row.author}</td>
+                            <td>{row.category}</td>
+                            <td>{row.publication_year}</td>
+                            <td>{row.status}</td>
                         </tr>
                     ))}
                 </tbody>

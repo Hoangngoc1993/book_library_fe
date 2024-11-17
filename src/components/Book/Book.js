@@ -5,18 +5,19 @@ import InputSelectComponent from "../InputSelectComponent/InputSelectComponent";
 import SearchTable from "../SearchTable/SearchTable";
 import ConfirmBox from "../ConfirmBox/ConfirmBox";
 import SuccessBox from "../SuccessBox/SuccessBox";
+import ErrorBox from "../ErrorBox/ErrorBox";
 import { useBookContext } from "../../context/BookContext";
 import axios from 'axios';
 
 function Book() {
-    const [ma_sach, setMaSach] = useState(0);
-    const [ten_sach, setTenSach] = useState('');
-    const [tac_gia, setTacGia] = useState('');
-    const [ma_ngon_ngu, setMaNgonNgu] = useState(0);
-    const [nam_xuat_ban, setNamXuatBan] = useState(0);
-    const [ma_trang_thai, setMaTrangThai] = useState(-1);
-    const [ma_the_loai, setMaTheLoai] = useState(0);
-    const [gioi_thieu, setGioiThieu] = useState('');
+    const [bookId, setBookId] = useState(0);
+    const [bookName, setBookName] = useState('');
+    const [author, setAuthor] = useState('');
+    const [languageId, setLanguageId] = useState(0);
+    const [publicationYear, setPublicationYear] = useState(0);
+    const [statusId, setStatusId] = useState(-1);
+    const [categoryId, setCategoryId] = useState(0);
+    const [introducion, setIntroducion] = useState('');
 
     const [isCreateBoxOpen, setIsCreateBoxOpen] = useState(false);
     const [isUpdateBoxOpen, setIsUpdateBoxOpen] = useState(false);
@@ -26,34 +27,36 @@ function Book() {
     const [isUpdateSuccessOpen, setIsUpdateSuccessOpen] = useState(false);
     const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
+    const [hasError, setHasError] = useState(false);
+
     const { 
-        columnName, listNgonNgu, listTheLoai, listTrangThai, 
+        columnName, listLanguages, listCategories, listStatus, 
         listBooks, setListBooks,
-        idClicked
+        idClicked, setIdClicked
     } = useBookContext();
 
     const ClearBookSearchInput = () => {
-        setMaSach(0);
-        setTenSach('');
-        setTacGia('');
-        setMaNgonNgu(0);
-        setNamXuatBan(0);
-        setMaTrangThai(-1);
-        setMaTheLoai(0);
-        setGioiThieu('');
+        setBookId(0);
+        setBookName('');
+        setAuthor('');
+        setLanguageId(0);
+        setPublicationYear(0);
+        setStatusId(-1);
+        setCategoryId(0);
+        setIntroducion('');
     }
 
     const fnSearchBookClick = async () => {
         try {
             const response = await axios.get('http://localhost:8080/books', {
                 params: {
-                    maSach: ma_sach,
-                    tenSach: ten_sach,
-                    tacGia: tac_gia,
-                    namXuatBan: nam_xuat_ban,
-                    maNgonNgu: ma_ngon_ngu,
-                    maTheLoai: ma_the_loai,
-                    maTrangThai: ma_trang_thai
+                    bookId: bookId,
+                    bookName: bookName,
+                    author: author,
+                    publicationYear: publicationYear,
+                    languageId: languageId,
+                    categoryId: categoryId,
+                    statusId: statusId
                 },
                 headers: {
                     'Content-Type': 'application/json'
@@ -72,14 +75,14 @@ function Book() {
                     'Content-Type': 'application/json'
                 },
             });
-            setMaSach(bookId);
-            setTenSach(response.data.tenSach);
-            setTacGia(response.data.tacGia);
-            setNamXuatBan(response.data.namXuatBan);
-            setMaNgonNgu(response.data.maNgonNgu);
-            setMaTheLoai(response.data.maTheLoai);
-            setMaTrangThai(response.data.maTrangThai);
-            setGioiThieu(response.data.gioiThieu);
+            setBookId(bookId);
+            setBookName(response.data.book_name);
+            setAuthor(response.data.author);
+            setPublicationYear(response.data.publication_year);
+            setLanguageId(response.data.language_id);
+            setCategoryId(response.data.category_id);
+            setStatusId(response.data.status_id);
+            setIntroducion(response.data.introducion);
         } catch (error) {
             console.error("Error!", error);
         }
@@ -87,14 +90,14 @@ function Book() {
     
     const fnCreateBookClick = async () => {
         const bookRequest = {
-            maSach: ma_sach,
-            tenSach: ten_sach,
-            tacGia: tac_gia,
-            namXuatBan: nam_xuat_ban,
-            maNgonNgu: ma_ngon_ngu,
-            maTheLoai: ma_the_loai,
-            maTrangThai: ma_trang_thai,
-            gioiThieu: gioi_thieu
+            book_id: bookId,
+            book_name: bookName,
+            author: author,
+            publication_year: publicationYear,
+            language_id: languageId,
+            category_id: categoryId,
+            status_id: statusId,
+            introducion: introducion
         };
 
         try {
@@ -105,21 +108,22 @@ function Book() {
             });
             setIsCreateSuccessOpen(true);
         } catch (error) {
+            setHasError(true);
             console.log('Creating was failed!');
-            throw error;
+            // throw error;
         }
     };
 
     const fnUpdateBookClick = async () => {
         const bookRequest = {
-            maSach: ma_sach,
-            tenSach: ten_sach,
-            tacGia: tac_gia,
-            namXuatBan: nam_xuat_ban,
-            maNgonNgu: ma_ngon_ngu,
-            maTheLoai: ma_the_loai,
-            maTrangThai: ma_trang_thai,
-            gioiThieu: gioi_thieu
+            book_id: bookId,
+            book_name: bookName,
+            author: author,
+            publication_year: publicationYear,
+            language_id: languageId,
+            category_id: categoryId,
+            status_id: statusId,
+            introducion: introducion
         };
 
         try {
@@ -166,6 +170,7 @@ function Book() {
         setIsCreateBoxOpen(false);
         setIsDeleteBoxOpen(false);
         setIsUpdateBoxOpen(false);
+        setIdClicked(0);
     }
 
     const SuccessBoxClose = () => {
@@ -190,6 +195,12 @@ function Book() {
         fnDeleteBookById();
     }
 
+    const ErrorBoxClose = () => {
+        setHasError(false);
+        ClearBookSearchInput();
+        setIdClicked(0);
+    }
+
     useEffect(() => {
         fnSearchBookById(idClicked);
       }, [idClicked]);
@@ -204,25 +215,25 @@ function Book() {
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Mã sách:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={ma_sach} setInputValue={setMaSach}/>
+                            <InputComponent inputValue={bookId} setInputValue={setBookId}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Tên sách:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={ten_sach} setInputValue={setTenSach}/>
+                            <InputComponent inputValue={bookName} setInputValue={setBookName}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Tác giả:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={tac_gia} setInputValue={setTacGia}/>
+                            <InputComponent inputValue={author} setInputValue={setAuthor}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Năm xuất bản:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={nam_xuat_ban} setInputValue={setNamXuatBan}/>
+                            <InputComponent inputValue={publicationYear} setInputValue={setPublicationYear}/>
                         </div>
                     </div>
                 </div>
@@ -231,9 +242,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Ngôn ngữ:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_ngon_ngu} 
-                                setInputValue={setMaNgonNgu}
-                                listOption={listNgonNgu}
+                                inputValue={languageId} 
+                                setInputValue={setLanguageId}
+                                listOption={listLanguages}
                             />
                         </div>
                     </div>
@@ -241,9 +252,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Thể loại:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_the_loai} 
-                                setInputValue={setMaTheLoai}
-                                listOption={listTheLoai}
+                                inputValue={categoryId} 
+                                setInputValue={setCategoryId}
+                                listOption={listCategories}
                             />
                         </div>
                     </div>
@@ -251,9 +262,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Trạng thái:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_trang_thai} 
-                                setInputValue={setMaTrangThai}
-                                listOption={listTrangThai}
+                                inputValue={statusId} 
+                                setInputValue={setStatusId}
+                                listOption={listStatus}
                             />
                         </div>
                     </div>
@@ -287,25 +298,25 @@ function Book() {
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Mã sách:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={ma_sach} setInputValue={setMaSach}/>
+                            <InputComponent inputValue={bookId} setInputValue={setBookId}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Tên sách:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={ten_sach} setInputValue={setTenSach}/>
+                            <InputComponent inputValue={bookName} setInputValue={setBookName}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Tác giả:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={tac_gia} setInputValue={setTacGia}/>
+                            <InputComponent inputValue={author} setInputValue={setAuthor}/>
                         </div>
                     </div>
                     <div className='row book-search-item'>
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Năm xuất bản:</div>
                         <div className='col-sm-8 col-md-8'>
-                            <InputComponent inputValue={nam_xuat_ban} setInputValue={setNamXuatBan}/>
+                            <InputComponent inputValue={publicationYear} setInputValue={setPublicationYear}/>
                         </div>
                     </div>
                 </div>
@@ -314,9 +325,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Ngôn ngữ:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_ngon_ngu} 
-                                setInputValue={setMaNgonNgu}
-                                listOption={listNgonNgu}
+                                inputValue={languageId} 
+                                setInputValue={setLanguageId}
+                                listOption={listLanguages}
                             />
                         </div>
                     </div>
@@ -324,9 +335,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Trạng thái:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_trang_thai} 
-                                setInputValue={setMaTrangThai}
-                                listOption={listTrangThai}
+                                inputValue={statusId} 
+                                setInputValue={setStatusId}
+                                listOption={listStatus}
                             />
                         </div>
                     </div>
@@ -334,9 +345,9 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Thể loại:</div>
                         <div className='col-sm-5 col-md-5'>
                             <InputSelectComponent 
-                                inputValue={ma_the_loai} 
-                                setInputValue={setMaTheLoai}
-                                listOption={listTheLoai}
+                                inputValue={categoryId} 
+                                setInputValue={setCategoryId}
+                                listOption={listCategories}
                             />
                         </div>
                     </div>
@@ -347,7 +358,7 @@ function Book() {
                     <div className='row book-search-item'>
                         <div className='col-sm-2 col-md-2 book-search-item-name'>Giới thiệu sách:</div>
                         <div className='col-sm-10 col-md-10'>
-                            <InputComponent inputValue={gioi_thieu} setInputValue={setGioiThieu}/>
+                            <InputComponent inputValue={introducion} setInputValue={setIntroducion}/>
                         </div>
                     </div>
                 </div>
@@ -369,6 +380,11 @@ function Book() {
                                 isOpen={isCreateSuccessOpen}
                                 message={"Dữ liệu tạo mới thành công!"}
                                 onClose={SuccessBoxClose}
+                            />
+                            <ErrorBox
+                                isOpen={hasError}
+                                message={"Đã có lỗi xảy ra khi tạo dữ liệu!"}
+                                onClose={ErrorBoxClose}
                             />
                         </div>
                         <div className='col-sm-4 col-md-4  book-search-item'>
