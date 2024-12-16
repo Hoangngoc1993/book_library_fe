@@ -4,8 +4,7 @@ import InputComponent from "../InputComponent/InputComponent";
 import InputSelectComponent from "../InputSelectComponent/InputSelectComponent";
 import SearchTable from "../SearchTable/SearchTable";
 import ConfirmBox from "../ConfirmBox/ConfirmBox";
-import SuccessBox from "../SuccessBox/SuccessBox";
-import ErrorBox from "../ErrorBox/ErrorBox";
+import ReportBox from "../ReportBox/ReportBox";
 import { useBookContext } from "../../context/BookContext";
 import axios from 'axios';
 
@@ -18,6 +17,7 @@ function Book() {
     const [statusId, setStatusId] = useState(-1);
     const [categoryId, setCategoryId] = useState(0);
     const [introducion, setIntroducion] = useState('');
+    const [updateTime, setUpdateTime] = useState(null);
 
     const [isCreateBoxOpen, setIsCreateBoxOpen] = useState(false);
     const [isUpdateBoxOpen, setIsUpdateBoxOpen] = useState(false);
@@ -27,7 +27,13 @@ function Book() {
     const [isUpdateSuccessOpen, setIsUpdateSuccessOpen] = useState(false);
     const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
 
-    const [hasError, setHasError] = useState(false);
+    const [hasCreateError, setHasCreateError] = useState(false);
+    const [hasUpdateError, setHasUpdateError] = useState(false);
+    const [hasDeleteError, setHasDeleteError] = useState(false);
+
+    const [noDataFounded, setNoDataFounded] = useState(false);
+    const [messBookIdError, setMessBookIdError] = useState('');
+    const [messPublicationYearError, setMessPublicationYearError] = useState('');
 
     const { 
         columnName, listLanguages, listCategories, listStatus, 
@@ -44,25 +50,39 @@ function Book() {
         setStatusId(-1);
         setCategoryId(0);
         setIntroducion('');
+        setMessBookIdError('');
+        setMessPublicationYearError('');
     }
 
     const fnSearchBookClick = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/books', {
-                params: {
-                    bookId: bookId,
-                    bookName: bookName,
-                    author: author,
-                    publicationYear: publicationYear,
-                    languageId: languageId,
-                    categoryId: categoryId,
-                    statusId: statusId
-                },
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            setListBooks(response.data);
+            if(Number.isInteger(Number(bookId)) && Number.isInteger(Number(publicationYear))){
+                const response = await axios.get('http://localhost:8080/books', {
+                    params: {
+                        bookId: bookId,
+                        bookName: bookName,
+                        author: author,
+                        publicationYear: publicationYear,
+                        languageId: languageId,
+                        categoryId: categoryId,
+                        statusId: statusId
+                    },
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                setListBooks(response.data);
+                if(response.data.length == 0){
+                    setNoDataFounded(true);
+                }
+            } else {
+                if(!Number.isInteger(Number(bookId))){
+                    setMessBookIdError('Vui lòng nhập số ở ô mã sách');
+                }
+                if(!Number.isInteger(Number(publicationYear))){
+                    setMessPublicationYearError('Vui lòng nhập số ở ô năm xuất bản');
+                }
+            }
         } catch (error) {
             console.error("Error!", error);
         }
@@ -83,6 +103,7 @@ function Book() {
             setCategoryId(response.data.category_id);
             setStatusId(response.data.status_id);
             setIntroducion(response.data.introducion);
+            setUpdateTime(response.data.update_time)
         } catch (error) {
             console.error("Error!", error);
         }
@@ -97,7 +118,8 @@ function Book() {
             language_id: languageId,
             category_id: categoryId,
             status_id: statusId,
-            introducion: introducion
+            introducion: introducion,
+            update_time: null
         };
 
         try {
@@ -108,9 +130,7 @@ function Book() {
             });
             setIsCreateSuccessOpen(true);
         } catch (error) {
-            setHasError(true);
-            console.log('Creating was failed!');
-            // throw error;
+            setHasCreateError(true);
         }
     };
 
@@ -123,7 +143,8 @@ function Book() {
             language_id: languageId,
             category_id: categoryId,
             status_id: statusId,
-            introducion: introducion
+            introducion: introducion,
+            update_time: updateTime
         };
 
         try {
@@ -132,10 +153,13 @@ function Book() {
                 'Content-Type': 'application/json'
                 }
             });
-            setIsUpdateSuccessOpen(true);
+            if(response.data == "Updated successfully"){
+                setIsUpdateSuccessOpen(true);
+            } else {
+                setHasUpdateError(true);
+            }
         } catch (error) {
-            console.log('Updating was failed!');
-            throw error;
+            setHasUpdateError(true);
         }
     };
 
@@ -149,7 +173,7 @@ function Book() {
                 });
                 setIsDeleteSuccessOpen(true);
             } catch (error) {
-                console.log('Deleting was failed!');
+                setHasDeleteError(true);
             }
         }
     };
@@ -173,11 +197,17 @@ function Book() {
         setIdClicked(0);
     }
 
-    const SuccessBoxClose = () => {
+    const ReportBoxClose = () => {
         setIsCreateSuccessOpen(false);
         setIsUpdateSuccessOpen(false);
         setIsDeleteSuccessOpen(false);
+        setNoDataFounded(false);
         ClearBookSearchInput();
+        setHasCreateError(false);
+        setHasUpdateError(false);
+        setHasDeleteError(false);
+        ClearBookSearchInput();
+        setIdClicked(0);
     }
 
     const CreateSuccess = () => {
@@ -195,12 +225,6 @@ function Book() {
         fnDeleteBookById();
     }
 
-    const ErrorBoxClose = () => {
-        setHasError(false);
-        ClearBookSearchInput();
-        setIdClicked(0);
-    }
-
     useEffect(() => {
         fnSearchBookById(idClicked);
       }, [idClicked]);
@@ -216,6 +240,7 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Mã sách:</div>
                         <div className='col-sm-8 col-md-8'>
                             <InputComponent inputValue={bookId} setInputValue={setBookId}/>
+                            <div className="row message-error">{messBookIdError}</div>
                         </div>
                     </div>
                     <div className='row book-search-item'>
@@ -234,6 +259,7 @@ function Book() {
                         <div className='col-sm-3 col-md-3 book-search-item-name'>Năm xuất bản:</div>
                         <div className='col-sm-8 col-md-8'>
                             <InputComponent inputValue={publicationYear} setInputValue={setPublicationYear}/>
+                            <div className="row message-error">{messPublicationYearError}</div>
                         </div>
                     </div>
                 </div>
@@ -277,6 +303,11 @@ function Book() {
                         <div className='col-sm-4 col-md-4 book-search-item'></div>
                         <div className='col-sm-4 col-md-4 book-search-item'>
                             <button className="book-btn" onClick={fnSearchBookClick}>Tìm kiếm</button>
+                            <ReportBox 
+                                isOpen={noDataFounded}
+                                message={"Không có dữ liệu được tìm thấy!"}
+                                onClose={ReportBoxClose}
+                            />
                         </div>
                         <div className='col-sm-4 col-md-4 book-search-item'>
                             <button className="book-btn" onClick={ClearBookSearchInput}>Clear</button>
@@ -376,15 +407,15 @@ function Book() {
                                 onClose={ConfirmBoxClose}
                                 onConfirm={CreateSuccess}
                             />
-                            <SuccessBox 
+                            <ReportBox 
                                 isOpen={isCreateSuccessOpen}
                                 message={"Dữ liệu tạo mới thành công!"}
-                                onClose={SuccessBoxClose}
+                                onClose={ReportBoxClose}
                             />
-                            <ErrorBox
-                                isOpen={hasError}
+                            <ReportBox
+                                isOpen={hasCreateError}
                                 message={"Đã có lỗi xảy ra khi tạo dữ liệu!"}
-                                onClose={ErrorBoxClose}
+                                onClose={ReportBoxClose}
                             />
                         </div>
                         <div className='col-sm-4 col-md-4  book-search-item'>
@@ -395,10 +426,15 @@ function Book() {
                                 onClose={ConfirmBoxClose}
                                 onConfirm={UpdateSuccess}
                             />
-                            <SuccessBox 
+                            <ReportBox 
                                 isOpen={isUpdateSuccessOpen}
                                 message={"Dữ liệu chỉnh sửa thành công!"}
-                                onClose={SuccessBoxClose}
+                                onClose={ReportBoxClose}
+                            />
+                            <ReportBox
+                                isOpen={hasUpdateError}
+                                message={"Đã có lỗi xảy ra khi chỉnh sửa dữ liệu!"}
+                                onClose={ReportBoxClose}
                             />
                         </div>
                         <div className='col-sm-4 col-md-4  book-search-item'>
@@ -409,10 +445,15 @@ function Book() {
                                 onClose={ConfirmBoxClose}
                                 onConfirm={DeleteSuccess}
                             />
-                            <SuccessBox 
+                            <ReportBox 
                                 isOpen={isDeleteSuccessOpen}
                                 message={"Đã xoá dữ liệu thành công!"}
-                                onClose={SuccessBoxClose}
+                                onClose={ReportBoxClose}
+                            />
+                            <ReportBox
+                                isOpen={hasDeleteError}
+                                message={"Đã có lỗi xảy ra khi xoá dữ liệu!"}
+                                onClose={ReportBoxClose}
                             />
                         </div>
                     </div>
