@@ -37,3 +37,8 @@
     background-color:rgb(3, 98, 44);
     border: 2px solid rgb(3, 98, 44);
 }
+
+.message-error {
+    color: red;
+    padding-left: 4%;
+}

@@ -16,7 +16,7 @@ export const BookProvider = ({ children }) => {
         'Mã sách', 'Tên sách', 'Ngôn ngữ', 'Tác giả', 'Thể loại', 'Năm xuất bản', 'Trạng thái'
     ];
 
-    //listNgonNgu is loaded
+    //listLanguages is loaded
     useEffect(() => {
         axios.get('http://localhost:8080/languages')
             .then(response => {
@@ -27,6 +27,7 @@ export const BookProvider = ({ children }) => {
             });
     }, []);
 
+    //listCategories is loaded
     useEffect(() => {
         axios.get('http://localhost:8080/categories')
         .then(response => {
@@ -37,6 +38,7 @@ export const BookProvider = ({ children }) => {
         })
     }, []);
 
+    //listStatus is loaded
     useEffect(() => {
         axios.get('http://localhost:8080/status')
         .then(response => {
